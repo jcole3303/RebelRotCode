@@ -272,7 +272,10 @@ void pause() {
   // Stop all the motors
   SetXMotor(XMotorStopped);
   SetYMotor(YMotorStopped);
+<<<<<<< HEAD
   delay(1000);
+=======
+>>>>>>> ea2a337bac229f0f070140487416b45fa5396490
   digitalWrite(Relaypin, false); // Stop auger
   Comp_State = Paused;
 
@@ -280,11 +283,18 @@ void pause() {
 
 void unpause() {
   Serial.println("Unpause system");
+<<<<<<< HEAD
   digitalWrite(Relaypin, Auger_State_Saved);
   delay(1000); //delay for auger motor to come to speed
   SetXMotor(XMotor_State_Saved);
   SetYMotor(YMotor_State_Saved);
   Comp_State = Comp_State_Saved;
+=======
+  SetXMotor(XMotor_State_Saved);
+  SetYMotor(YMotor_State_Saved);
+  digitalWrite(Relaypin, Auger_State_Saved);
+  Comp_State_Saved = Comp_State;
+>>>>>>> ea2a337bac229f0f070140487416b45fa5396490
 
 }
 
