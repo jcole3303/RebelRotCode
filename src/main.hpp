@@ -64,7 +64,7 @@ const int Yin2 = 25;   //in2 Hbridge port B
 const int XEN_A = 4;        //Port A EN
 const int YEN_B = 5;        //Port B EN
 
-Encoder XEncoder(2, 3);
+
 
 int Y1 = digitalRead(Y1pin);    //Y1 Halleffect sensor no contact
 int Y2 = digitalRead(Y2pin);    //Y2 Halleffect sensor no contact

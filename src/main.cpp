@@ -1,7 +1,7 @@
 #include "main.hpp"
 #include <Encoder.h>
 
-
+Encoder XEncoder(2, 3);
 
 void setup() {
   pinMode(Relaypin, OUTPUT);
