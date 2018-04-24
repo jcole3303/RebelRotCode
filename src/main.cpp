@@ -1,7 +1,7 @@
 #include "main.hpp"
 #include <Encoder.h>
 
-Encoder XEncoder(2, 3);
+
 
 void setup() {
   pinMode(Relaypin, OUTPUT);
@@ -37,6 +37,14 @@ void setup() {
 } //void setup
 
 void loop() {
+  Y1 = digitalRead(Y1pin);
+  Serial.println(Y1);
+  Y2 = digitalRead(Y2pin);
+  Serial.println(Y2);
+  X1 = digitalRead(X1pin);
+  Serial.println(X1);
+  X2 = digitalRead(X2pin);
+  Serial.println(X2);
   // Debug:
   /*
   Y1 = digitalRead(Y1pin);
@@ -272,10 +280,7 @@ void pause() {
   // Stop all the motors
   SetXMotor(XMotorStopped);
   SetYMotor(YMotorStopped);
-<<<<<<< HEAD
   delay(1000);
-=======
->>>>>>> ea2a337bac229f0f070140487416b45fa5396490
   digitalWrite(Relaypin, false); // Stop auger
   Comp_State = Paused;
 
@@ -283,18 +288,11 @@ void pause() {
 
 void unpause() {
   Serial.println("Unpause system");
-<<<<<<< HEAD
   digitalWrite(Relaypin, Auger_State_Saved);
   delay(1000); //delay for auger motor to come to speed
   SetXMotor(XMotor_State_Saved);
   SetYMotor(YMotor_State_Saved);
   Comp_State = Comp_State_Saved;
-=======
-  SetXMotor(XMotor_State_Saved);
-  SetYMotor(YMotor_State_Saved);
-  digitalWrite(Relaypin, Auger_State_Saved);
-  Comp_State_Saved = Comp_State;
->>>>>>> ea2a337bac229f0f070140487416b45fa5396490
 
 }
 
