@@ -1,7 +1,7 @@
 #include "main.hpp"
 #include <Encoder.h>
 
-Encoder XEncoder(2, 3);
+Encoder XEncoder(18, 3);
 
 void setup() {
   pinMode(Relaypin, OUTPUT);
@@ -12,7 +12,11 @@ void setup() {
   pinMode(Yin2, OUTPUT);
   pinMode(XEN_A, OUTPUT);
   pinMode(YEN_B, OUTPUT);
-
+  pinMode(indX1, OUTPUT);
+  pinMode(indX2, OUTPUT);
+  pinMode(indY1, OUTPUT);
+  pinMode(indY2, OUTPUT);
+  pinMode(indMixing, OUTPUT);
   pinMode(StartButtonpin, INPUT);
 
   pinMode(X1pin, INPUT);
@@ -34,32 +38,26 @@ void setup() {
   Serial.println(X1);
   X2 = digitalRead(X2pin);
   Serial.println(X2);
+  indicator();
 } //void setup
 
 void loop() {
-  Y1 = digitalRead(Y1pin);
-  Serial.println(Y1);
-  Y2 = digitalRead(Y2pin);
-  Serial.println(Y2);
-  X1 = digitalRead(X1pin);
-  Serial.println(X1);
-  X2 = digitalRead(X2pin);
-  Serial.println(X2);
+
   // Debug:
-  /*
+
   Y1 = digitalRead(Y1pin);
   Serial.print("Y1");
   Serial.println(Y1);
+  X1 = digitalRead(X1pin);
   Serial.print("X1");
+  Serial.println(X1);
   Y2 = digitalRead(Y2pin);
   Serial.print("Y2");
   Serial.println(Y2);
-  X1 = digitalRead(X1pin);
-  Serial.println(X1);
   X2 = digitalRead(X2pin);
   Serial.print("X2");
   Serial.println(X2);
-  */
+
 
   // We are stopped, they hit the start button.
   if (digitalRead(StartButtonpin) == HIGH && Comp_State == Stopped) {
@@ -69,6 +67,7 @@ void loop() {
 
     // Also, activate the auger.
     digitalWrite(Relaypin, HIGH);
+    delay(5000); //time for auger to start spinning
 
     Serial.println("Start button pressed and machine stopped; now starting.");
   }
@@ -76,6 +75,7 @@ void loop() {
   // We are not stopped, they hit the stop button.
   if (digitalRead(StartButtonpin) == LOW && Comp_State != Stopped) {
     Comp_State = Stopping;
+
     Serial.println("Stop button pressed and going home to shut down");
   }
 
@@ -158,6 +158,8 @@ void loop() {
         // We are home. Shut down the auger.
         SetXMotor(XMotorStopped);
         SetYMotor(YMotorStopped);
+        delay(5000); //delay to be sure the x and y motors have stopped and then
+        //the auger can shut down with out damage.
         digitalWrite(Relaypin, LOW);
         Serial.println("Machine has returned home.  Entering stop state.");
         Comp_State = Stopped;
@@ -178,9 +180,8 @@ void loop() {
       break;
 
   } // COMP Switch
-
   Serial.println("End");
-  delay(1000);
+//delay (1000); terminal delay
 } // void loop
 
 
@@ -218,13 +219,13 @@ void SetYMotor(YMOTOR state) {
   else if (state == YMotorMovingFront) {
     digitalWrite(Yin1,HIGH);
     digitalWrite(Yin2,LOW);
-    analogWrite(YEN_B, 155);
+    analogWrite(YEN_B, 150);
     Serial.println("Y motor now moving to front.");
   }
   else if (state == YMotorMovingBack) {
     digitalWrite(Yin1,LOW);
     digitalWrite(Yin2,HIGH);
-    analogWrite(YEN_B,125);
+    analogWrite(YEN_B,150);
     Serial.println("Y motor now moving to back.");
   }
   YMotor_State = state;
@@ -233,6 +234,7 @@ void SetYMotor(YMOTOR state) {
 bool atHome() {
   Y1 = digitalRead(Y1pin);
   X1 = digitalRead(X1pin);
+
   if ((X1 == SWITCH_CLOSED) && (Y1 == SWITCH_CLOSED)) {
     return true;
   }
@@ -273,15 +275,16 @@ void pause() {
   Comp_State_Saved = Comp_State;
   Serial.print("Comp_State_Saved = ");
   Serial.println(Comp_State_Saved);
+  Auger_State_Saved = digitalRead(Relaypin);
   XMotor_State_Saved = XMotor_State;
   YMotor_State_Saved = YMotor_State;
-  Auger_State_Saved = digitalRead(Relaypin);
+
 
   // Stop all the motors
   SetXMotor(XMotorStopped);
   SetYMotor(YMotorStopped);
-  delay(1000);
-  digitalWrite(Relaypin, false); // Stop auger
+  delay(5000); //delay for X&Y motors to stop before auger shuts down
+  digitalWrite(Relaypin, LOW); // Stop auger
   Comp_State = Paused;
 
 }
@@ -559,4 +562,37 @@ void showPosition() {
   Serial.print(startX);
   Serial.print(", DeltaXPerSweep = ");
   Serial.println(DeltaXPerSweep);
+}
+
+void indicator() {
+  if (Comp_State == Mixing) {
+    digitalWrite(indMixing, on);
+  }
+  else
+  digitalWrite(indMixing, off);
+  if (Y1 == SWITCH_CLOSED) {
+    digitalWrite(indY1, on);
+  }
+  else {
+  digitalWrite(indY1, off);
+  }
+  if (X1 == SWITCH_CLOSED) {
+    digitalWrite(indX1, on);
+  }
+  else {
+  digitalWrite(indX1, off);
+  }
+  if (Y2 == SWITCH_CLOSED) {
+    digitalWrite(indY2, on);
+  }
+  else {
+  digitalWrite(indY2, off);
+  }
+  if (X2 == SWITCH_CLOSED) {
+    digitalWrite(indX2, on);
+  }
+  else {
+  digitalWrite(indX2, off);
+  }
+
 }
